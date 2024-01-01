@@ -13,8 +13,10 @@ describe("Генерация токена", () => {
 
   describe("Генерация токена - с ошибкой", () => {
     test("Генерация токена failed.", async () => {
-      const res = await user.token("string", "string"); // падает с ошибкой Received: {"code": "1200", "message": "UserName and Password required."}
-      expect(res.body).toBe("Failed");
+      const res = await user.token({ userName: "string", password: "string" });
+      expect(res.body.token).toBe(null);
+      expect(res.body.expires).toBe(null);
+      expect(res.body.status).toBe("Failed");
       expect(res.body.result).toBe("User authorization failed.");
     });
     test("Генерация токена без пароля и логина", async () => {
@@ -37,7 +39,7 @@ describe("Авторизация", () => {
 
   describe("Негативные тесты", () => {
     test("User authorization failed.", async () => {
-      const res = await user.login("string", "string"); // Received: "UserName and Password required."
+      const res = await user.login({ userName: "string", password: "string" });
       expect(res.body.code).toBe("1207");
       expect(res.body.message).toBe("User not found!");
       expect(res.status).toBe(404);
