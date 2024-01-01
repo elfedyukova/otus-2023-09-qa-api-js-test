@@ -3,8 +3,7 @@ import supertest from "supertest";
 import config from "./config";
 
 const { url } = config;
-let token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InN0cmluZyIsInBhc3N3b3JkIjoiNTJTdHJpbmdAIiwiaWF0IjoxNzA0MTE2NDAxfQ.KduTvCmd69PXq5wK3hHlMMgukXu5By9Ve-E_CGAcnk4";
+let token = "";
 let userID = "d242c2cc-875e-4a4d-b02f-1c8a5ff0632b";
 
 const user = {
@@ -13,6 +12,17 @@ const user = {
       .post("/Account/v1/GenerateToken")
       .set("Accept", "application/json")
       .send(payload);
+  },
+
+  async getAuthToken() {
+    const payload = config.credential;
+    const res = await this.token(payload);
+    return res.body.token;
+  },
+
+  async getAuthTokenInCache() {
+    token = await this.getAuthToken;
+    return this.token;
   },
 
   login: (payload) => {
