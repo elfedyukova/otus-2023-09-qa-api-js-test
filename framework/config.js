@@ -3,7 +3,7 @@ const config = {
   url: "https://bookstore.demoqa.com",
   credential: {
     userName: "string",
-    password: "51String@",
+    password: "52String@",
   },
 };
 

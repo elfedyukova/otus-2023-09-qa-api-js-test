@@ -43,7 +43,7 @@ describe("Получение информации о пользователе", 
   describe("Позитивный тест", () => {
     test("Успешное получение информации", async () => {
       const res = await user.info();
-      expect(res.body.userId).toBe("a3d59e85-2ea7-4ae7-8a1b-e265c8dfb963");
+      expect(res.body.userId).toBe("d242c2cc-875e-4a4d-b02f-1c8a5ff0632b");
       expect(res.body.username).toBe("string");
       expect(res.status).toBe(200);
     });

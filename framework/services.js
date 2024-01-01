@@ -4,7 +4,8 @@ import config from "./config";
 
 const { url } = config;
 let token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InN0cmluZyIsInBhc3N3b3JkIjoiNTFTdHJpbmdAIiwiaWF0IjoxNzA0MTEzODAxfQ.8OlHF1yRFr5yN5as_SwuPwzAI-KA0MzDHu79lL5Dawk";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InN0cmluZyIsInBhc3N3b3JkIjoiNTJTdHJpbmdAIiwiaWF0IjoxNzA0MTE2NDAxfQ.KduTvCmd69PXq5wK3hHlMMgukXu5By9Ve-E_CGAcnk4";
+let userID = "d242c2cc-875e-4a4d-b02f-1c8a5ff0632b";
 
 const user = {
   token: (payload) => {
@@ -24,7 +25,7 @@ const user = {
 
   info: (payload) => {
     return supertest(url)
-      .get("/Account/v1/User/a3d59e85-2ea7-4ae7-8a1b-e265c8dfb963")
+      .get("/Account/v1/User/" + `${userID}`)
       .set("Accept", "application/json")
       .set("Authorization", `Bearer ${token}`)
       .send(payload);
@@ -32,7 +33,7 @@ const user = {
 
   delete: (payload) => {
     return supertest(url)
-      .delete("/Account/v1/User/a3d59e85-2ea7-4ae7-8a1b-e265c8dfb963")
+      .delete("/Account/v1/User/" + `${userID}`)
       .set("Accept", "application/json")
       .set("Authorization", `Bearer ${token}`)
       .send(payload);
