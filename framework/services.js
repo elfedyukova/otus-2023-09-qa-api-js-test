@@ -4,7 +4,7 @@ import config from "./config";
 
 const { url } = config;
 let token = "";
-let userID = "d242c2cc-875e-4a4d-b02f-1c8a5ff0632b";
+let userID = "e829fff0-7aad-4aa7-a145-75e2d2aa5a65";
 
 const user = {
   token: (payload) => {
@@ -35,9 +35,12 @@ const user = {
 
   info: (payload) => {
     return supertest(url)
-      .get("/Account/v1/User/" + `${userID}`)
+      .get("/Account/v1/User/8385b6fa-de02-4eaa-ac9a-118c7d69313a")
       .set("Accept", "application/json")
-      .set("Authorization", `Bearer ${token}`)
+      .set(
+        "Authorization",
+        `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InN0cmluZyIsInBhc3N3b3JkIjoiNTZTdHJpbmdAIiwiaWF0IjoxNzA0MTIyMzc3fQ.i_6Mbie85KqPcPd3uo0xqke4M0xblNIO0PXrNgWlum4`,
+      )
       .send(payload);
   },
 
