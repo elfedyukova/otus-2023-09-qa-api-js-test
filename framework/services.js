@@ -41,9 +41,39 @@ const user = {
       .send(payload);
   },
 
+  infoFailed: (payload) => {
+    return supertest(url)
+      .get("/Account/v1/User/666")
+      .set("Accept", "application/json")
+      .set("Authorization", `Bearer ${token}`)
+      .send(payload);
+  },
+
+  infoWithoutToken: (payload) => {
+    return supertest(url)
+      .get("/Account/v1/User/" + `${userID}`)
+      .set("Accept", "application/json")
+      .send(payload);
+  },
+
   delete: (payload) => {
     return supertest(url)
       .delete("/Account/v1/User/" + `${userID}`)
+      .set("Accept", "application/json")
+      .set("Authorization", `Bearer ${token}`)
+      .send(payload);
+  },
+
+  deleteWithoutToken: (payload) => {
+    return supertest(url)
+      .delete("/Account/v1/User/" + `${userID}`)
+      .set("Accept", "application/json")
+      .send(payload);
+  },
+
+  deleteFailed: (payload) => {
+    return supertest(url)
+      .delete("/Account/v1/User/666")
       .set("Accept", "application/json")
       .set("Authorization", `Bearer ${token}`)
       .send(payload);

@@ -13,9 +13,15 @@ describe("Генерация токена", () => {
 
   describe("Генерация токена - с ошибкой", () => {
     test("Генерация токена failed.", async () => {
-      const res = await user.login("string", "string"); // падает с ошибкой Received: {"code": "1200", "message": "UserName and Password required."}
+      const res = await user.token("string", "string"); // падает с ошибкой Received: {"code": "1200", "message": "UserName and Password required."}
       expect(res.body).toBe("Failed");
       expect(res.body.result).toBe("User authorization failed.");
+    });
+    test("Генерация токена без пароля и логина", async () => {
+      const res = await user.token();
+      expect(res.body.code).toBe("1200");
+      expect(res.body.message).toBe("UserName and Password required.");
+      expect(res.status).toBe(400);
     });
   });
 });
@@ -36,6 +42,13 @@ describe("Авторизация", () => {
       expect(res.body.message).toBe("User not found!");
       expect(res.status).toBe(404);
     });
+
+    test("Авторизация без пароля и логина", async () => {
+      const res = await user.login();
+      expect(res.body.code).toBe("1200");
+      expect(res.body.message).toBe("UserName and Password required.");
+      expect(res.status).toBe(400);
+    });
   });
 });
 
@@ -49,11 +62,17 @@ describe("Получение информации о пользователе", 
     });
   });
 
-  describe("Пользователь не найден", () => {
-    test("failed", async () => {
-      const res = await user.info("string", "string");
+  describe("Негативные тесты", () => {
+    test("Пользователь не найден", async () => {
+      const res = await user.infoFailed();
       expect(res.body.code).toBe("1207");
       expect(res.body.message).toBe("User not found!");
+    });
+    test("Получение информации без пароля и логина", async () => {
+      const res = await user.infoWithoutToken();
+      expect(res.body.code).toBe("1200");
+      expect(res.body.message).toBe("User not authorized!");
+      expect(res.status).toBe(401);
     });
   });
 });
@@ -64,21 +83,25 @@ describe("Удаление пользователя", () => {
       const res = await user.delete(config.credential);
       expect(res.status).toBe(204);
     });
-    describe("Пользователь не найден после удаления", () => {
-      test("failed", async () => {
-        const res = await user.info(config.credential);
-        expect(res.body.code).toBe("1207");
-        expect(res.body.message).toBe("User not found!");
-      });
+    test("Пользователь не найден после удаления", async () => {
+      const res = await user.info(config.credential);
+      expect(res.body.code).toBe("1207");
+      expect(res.body.message).toBe("User not found!");
     });
   });
 
-  describe("с ошибкой", () => {
-    test("failed", async () => {
-      const res = await user.delete(config.credential);
+  describe("Негативные тесты", () => {
+    test("Удаление пользователя с несуществующим id", async () => {
+      const res = await user.deleteFailed();
       expect(res.status).toBe(200);
       expect(res.body.code).toBe("1207");
       expect(res.body.message).toBe("User Id not correct!");
+    });
+    test("Удаление пользователя без пароля и логина", async () => {
+      const res = await user.deleteWithoutToken();
+      expect(res.body.code).toBe("1200");
+      expect(res.body.message).toBe("User not authorized!");
+      expect(res.status).toBe(401);
     });
   });
 });
