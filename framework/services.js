@@ -4,12 +4,19 @@ import config from "./config";
 
 const { url } = config;
 let token = "";
-let userID = "e829fff0-7aad-4aa7-a145-75e2d2aa5a65";
+let userID = "b027321d-bbf9-4bec-8a88-27f57c165331";
 
 const user = {
   token: (payload) => {
     return supertest(url)
       .post("/Account/v1/GenerateToken")
+      .set("Accept", "application/json")
+      .send(payload);
+  },
+
+  signup: (payload) => {
+    return supertest(url)
+      .post("/Account/v1/User")
       .set("Accept", "application/json")
       .send(payload);
   },
@@ -56,6 +63,14 @@ const user = {
     return supertest(url)
       .get("/Account/v1/User/" + `${userID}`)
       .set("Accept", "application/json")
+      .send(payload);
+  },
+
+  infoAfterDeleted: (payload) => {
+    return supertest(url)
+      .get("/Account/v1/User/" + `${userID}`)
+      .set("Accept", "application/json")
+      .set("Authorization", `Bearer ${token}`)
       .send(payload);
   },
 

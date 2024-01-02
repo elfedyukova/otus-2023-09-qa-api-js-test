@@ -28,6 +28,50 @@ describe("Генерация токена", () => {
   });
 });
 
+describe("Создание пользователя", () => {
+  describe("Позитивные тесты", () => {
+    test("Успешное создание", async () => {
+      function getRandom() {
+        return Math.random();
+      }
+      let randomInt = getRandom();
+      const res = await user.signup({
+        userName: "string",
+        password: randomInt + "560String@",
+      });
+      expect(res.status).toBe(201);
+      expect(res.body.username).toBe("string");
+    });
+  });
+
+  describe("Создание пользователя - с ошибкой", () => {
+    test("Создание пользователя failed.", async () => {
+      const res = await user.signup({
+        userName: "string",
+        password: "56String@",
+      });
+      expect(res.body.message).toBe("User exists!");
+      expect(res.body.code).toBe("1204");
+      expect(res.status).toBe(406);
+    });
+    test("Создание пользователя без пароля и логина", async () => {
+      const res = await user.signup();
+      expect(res.body.code).toBe("1200");
+      expect(res.body.message).toBe("UserName and Password required.");
+      expect(res.status).toBe(400);
+    });
+
+    test("Создание пользователя с коротким паролем", async () => {
+      const res = await user.signup({ userName: "string", password: "t" });
+      expect(res.status).toBe(400);
+      expect(res.body.code).toBe("1300");
+      expect(res.body.message).toBe(
+        "Passwords must have at least one non alphanumeric character, one digit ('0'-'9'), one uppercase ('A'-'Z'), one lowercase ('a'-'z'), one special character and Password must be eight characters or longer.",
+      );
+    });
+  });
+});
+
 describe("Авторизация", () => {
   describe("Позитивный тест", () => {
     test("Успешная авторизация", async () => {
@@ -86,7 +130,7 @@ describe("Удаление пользователя", () => {
       expect(res.status).toBe(204);
     });
     test("Пользователь не найден после удаления", async () => {
-      const res = await user.info(config.credential);
+      const res = await user.infoAfterDeleted(config.credential);
       expect(res.body.code).toBe("1207");
       expect(res.body.message).toBe("User not found!");
     });
