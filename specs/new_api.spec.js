@@ -1,51 +1,22 @@
 import user from "../framework/services";
 import config from "../framework/config";
 
-describe("Генерация токена", () => {
-  describe("Генерация токена - успешно", () => {
-    test("Успешная", async () => {
-      const res = await user.token(config.credential);
-      expect(res.body.result).toBe("User authorized successfully.");
-      expect(res.status).toBe(200);
-      expect(res.body.status).toBe("Success");
-    });
-  });
-
-  describe("Генерация токена - с ошибкой", () => {
-    test("Генерация токена failed.", async () => {
-      const res = await user.token({ userName: "string", password: "string" });
-      expect(res.body.token).toBe(null);
-      expect(res.body.expires).toBe(null);
-      expect(res.body.status).toBe("Failed");
-      expect(res.body.result).toBe("User authorization failed.");
-    });
-    test("Генерация токена без пароля и логина", async () => {
-      const res = await user.token();
-      expect(res.body.code).toBe("1200");
-      expect(res.body.message).toBe("UserName and Password required.");
-      expect(res.status).toBe(400);
-    });
-  });
-});
-
 describe("Создание пользователя", () => {
-  describe("Позитивные тесты", () => {
-    test("Успешное создание", async () => {
-      function getRandom() {
-        return Math.random();
-      }
-      let randomInt = getRandom();
-      const res = await user.signup({
-        userName: "string",
-        password: randomInt + "560String@",
-      });
-      expect(res.status).toBe(201);
-      expect(res.body.username).toBe("string");
+  test("Успешное создание пользователя", async () => {
+    function getRandom() {
+      return Math.random();
+    }
+    let randomInt = getRandom();
+    const res = await user.signup({
+      userName: "string",
+      password: randomInt + "560String@",
     });
+    expect(res.status).toBe(201);
+    expect(res.body.username).toBe("string");
   });
 
-  describe("Создание пользователя - с ошибкой", () => {
-    test("Создание пользователя failed.", async () => {
+  describe("Негативные тесты", () => {
+    test("Создание существующего пользователя", async () => {
       const res = await user.signup({
         userName: "string",
         password: "56String@",
@@ -60,7 +31,6 @@ describe("Создание пользователя", () => {
       expect(res.body.message).toBe("UserName and Password required.");
       expect(res.status).toBe(400);
     });
-
     test("Создание пользователя с коротким паролем", async () => {
       const res = await user.signup({ userName: "string", password: "t" });
       expect(res.status).toBe(400);
@@ -71,24 +41,42 @@ describe("Создание пользователя", () => {
     });
   });
 });
-
-describe("Авторизация", () => {
-  describe("Позитивный тест", () => {
-    test("Успешная авторизация", async () => {
-      const res = await user.login(config.credential);
-      expect(res.body).toBe(true);
-      expect(res.status).toBe(200);
+describe("Генерация токена", () => {
+  test("Успешная генерация токена", async () => {
+    const res = await user.token(config.credential);
+    expect(res.body.result).toBe("User authorized successfully.");
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe("Success");
+  });
+  describe("Негативные тесты", () => {
+    test("Генерация токена с некорректным логином и паролем.", async () => {
+      const res = await user.token({ userName: "string", password: "string" });
+      expect(res.body.token).toBe(null);
+      expect(res.body.expires).toBe(null);
+      expect(res.body.status).toBe("Failed");
+      expect(res.body.result).toBe("User authorization failed.");
+    });
+    test("Генерация токена без пароля и логина", async () => {
+      const res = await user.token();
+      expect(res.body.code).toBe("1200");
+      expect(res.body.message).toBe("UserName and Password required.");
+      expect(res.status).toBe(400);
     });
   });
-
+});
+describe("Авторизация", () => {
+  test("Успешная авторизация пользователя", async () => {
+    const res = await user.login(config.credential);
+    expect(res.body).toBe(true);
+    expect(res.status).toBe(200);
+  });
   describe("Негативные тесты", () => {
-    test("User authorization failed.", async () => {
+    test("Авторизация с неверными логином и паролем", async () => {
       const res = await user.login({ userName: "string", password: "string" });
       expect(res.body.code).toBe("1207");
       expect(res.body.message).toBe("User not found!");
       expect(res.status).toBe(404);
     });
-
     test("Авторизация без пароля и логина", async () => {
       const res = await user.login();
       expect(res.body.code).toBe("1200");
@@ -97,17 +85,13 @@ describe("Авторизация", () => {
     });
   });
 });
-
 describe("Получение информации о пользователе", () => {
-  describe("Позитивный тест", () => {
-    test("Успешное получение информации", async () => {
-      const res = await user.info();
-      expect(res.body.userId).toBe("8385b6fa-de02-4eaa-ac9a-118c7d69313a");
-      expect(res.body.username).toBe("string");
-      expect(res.status).toBe(200);
-    });
+  test("Успешное получение информации", async () => {
+    const res = await user.info();
+    expect(res.body.userId).toBe("f6223abe-ef23-4a75-93cf-679dc5245b5f");
+    expect(res.body.username).toBe("string");
+    expect(res.status).toBe(200);
   });
-
   describe("Негативные тесты", () => {
     test("Пользователь не найден", async () => {
       const res = await user.infoFailed();
@@ -122,11 +106,10 @@ describe("Получение информации о пользователе", 
     });
   });
 });
-
 describe("Удаление пользователя", () => {
   describe("успешно", () => {
     test("Успешное удаление", async () => {
-      const res = await user.delete(config.credential);
+      const res = await user.delete();
       expect(res.status).toBe(204);
     });
     test("Пользователь не найден после удаления", async () => {
@@ -145,6 +128,107 @@ describe("Удаление пользователя", () => {
     });
     test("Удаление пользователя без пароля и логина", async () => {
       const res = await user.deleteWithoutToken();
+      expect(res.body.code).toBe("1200");
+      expect(res.body.message).toBe("User not authorized!");
+      expect(res.status).toBe(401);
+    });
+
+    test("Удаление уже удаленного пользователя", async () => {
+      const res = await user.delete();
+      expect(res.body.code).toBe("1207");
+      expect(res.body.message).toBe("User Id not correct!");
+    });
+  });
+});
+
+describe("Создание книги", () => {
+  describe("успешно", () => {
+    test("Создание книги", async () => {
+      const res = await user.createBook();
+      expect(res.status).toBe(201);
+      expect(res.body.books.isbn).toBe("string");
+    });
+  });
+
+  describe("Негативные тесты", () => {
+    test("Создание книги с неправильным body", async () => {
+      const res = await user.deleteFailed();
+      expect(res.status).toBe(400);
+      expect(res.body.code).toBe("1207");
+      expect(res.body.message).toBe("User Id not correct!");
+    });
+    test("Создание кники. Пользователь не авторизован", async () => {
+      const res = await user.createBookWithoutToken();
+      expect(res.body.message).toBe("User not authorized!");
+      expect(res.status).toBe(401);
+    });
+  });
+});
+
+describe("Обновление книги", () => {
+  describe("успешно", () => {
+    test("?9", async () => {
+      const res = await user.updateBook();
+      expect(res.status).toBe(204);
+    });
+  });
+
+  describe("Негативные тесты", () => {
+    test("?", async () => {
+      const res = await user.deleteFailed();
+      expect(res.status).toBe(200);
+      expect(res.body.code).toBe("1207");
+      expect(res.body.message).toBe("User Id not correct!");
+    });
+    test("Обновление книги без токена", async () => {
+      const res = await user.updateBookWithoutToken();
+      expect(res.body.code).toBe("1200");
+      expect(res.body.message).toBe("User not authorized!");
+      expect(res.status).toBe(401);
+    });
+  });
+});
+
+describe("Получение информации о книге", () => {
+  describe("успешно", () => {
+    test("Получение информации о книге", async () => {
+      const res = await user.getInfoBook();
+      expect(res.status).toBe(200);
+    });
+  });
+
+  describe("Негативные тесты", () => {
+    test("Получение информации о книге без isbn", async () => {
+      const res = await user.getInfoBookWithoutIsbn();
+      expect(res.status).toBe(400);
+      expect(res.body.code).toBe("1207");
+      expect(res.body.message).toBe("User Id not correct!");
+    });
+    test("Получение информации о книге без авторизации", async () => {
+      const res = await user.getInfoBookWithoutToken();
+      expect(res.body.message).toBe("User not authorized!");
+      expect(res.status).toBe(401);
+    });
+  });
+});
+
+describe("Удаление книги", () => {
+  describe("успешно", () => {
+    test("Успешное удаление книги", async () => {
+      const res = await user.deleteBook();
+      expect(res.status).toBe(204);
+    });
+  });
+
+  describe("Негативные тесты", () => {
+    test("Удаление книги без isbn", async () => {
+      const res = await user.deleteBookFailed();
+      expect(res.status).toBe(200);
+      expect(res.body.code).toBe("1207");
+      expect(res.body.message).toBe("User Id not correct!");
+    });
+    test("Удаление книги без токена", async () => {
+      const res = await user.deleteBookWithoutToken();
       expect(res.body.code).toBe("1200");
       expect(res.body.message).toBe("User not authorized!");
       expect(res.status).toBe(401);
