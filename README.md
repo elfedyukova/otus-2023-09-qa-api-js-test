@@ -66,3 +66,8 @@ https://otus.ru/lessons/qajs/
 yarn add --dev jest-html-reporter
 ```
 
+#### CI/CD
+
+- Открыть /actions/new на https://github.com/
+- Configure Node.js -> Commit changes
+- Получаем /tree/main/.github/workflows
