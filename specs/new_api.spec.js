@@ -77,7 +77,7 @@ describe("Авторизация", () => {
       expect(res.body.message).toBe("User not found!");
       expect(res.status).toBe(404);
     });
-    test("Авторизация без пароля и логина", async () => {
+    test("Авторизация без пароля и логина ", async () => {
       const res = await user.login();
       expect(res.body.code).toBe("1200");
       expect(res.body.message).toBe("UserName and Password required.");
