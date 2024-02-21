@@ -48,7 +48,7 @@ const user = {
       .set("Accept", "application/json")
       .set(
         "Authorization",
-        `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InN0cmluZyIsInBhc3N3b3JkIjoiMTg1OTdTdHJpbmdAMCIsImlhdCI6MTcwODQ0Nzg2M30.PsG3gDmiet5yrwcYB0eAPhzb1KhghhnhSaWfbYiXYSg`,
+        `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InN0cmluZyIsInBhc3N3b3JkIjoiMTg1OTdTdHJpbmdAMCIsImlhdCI6MTcwODUyOTQwMX0.4I49ZvVDoopR-xlPj6QAXIzZFo6e_AafnahNMPP6pFc`,
       )
       .send(payload);
   },
