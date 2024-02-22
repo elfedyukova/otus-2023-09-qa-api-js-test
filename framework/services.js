@@ -3,20 +3,15 @@ import supertest from "supertest";
 import config from "./config";
 
 const { url } = config;
+
 let token = "";
-let userID = "b027321d-bbf9-4bec-8a88-27f57c165331";
+let userID = "f6223abe-ef23-4a75-93cf-679dc5245b5f";
+let isbn = "9781449325862";
 
 const user = {
   token: (payload) => {
     return supertest(url)
       .post("/Account/v1/GenerateToken")
-      .set("Accept", "application/json")
-      .send(payload);
-  },
-
-  signup: (payload) => {
-    return supertest(url)
-      .post("/Account/v1/User")
       .set("Accept", "application/json")
       .send(payload);
   },
@@ -40,13 +35,20 @@ const user = {
       .send(payload);
   },
 
-  info: (payload) => {
+  signup: (payload) => {
     return supertest(url)
-      .get("/Account/v1/User/8385b6fa-de02-4eaa-ac9a-118c7d69313a")
+      .post("/Account/v1/User")
+      .set("Accept", "application/json")
+      .send(payload);
+  },
+
+  info: (payload, userID) => {
+    return supertest(url)
+      .get(`/Account/v1/User/${userID}`)
       .set("Accept", "application/json")
       .set(
         "Authorization",
-        `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InN0cmluZyIsInBhc3N3b3JkIjoiNTZTdHJpbmdAIiwiaWF0IjoxNzA0MTIyMzc3fQ.i_6Mbie85KqPcPd3uo0xqke4M0xblNIO0PXrNgWlum4`,
+        `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InN0cmluZyIsInBhc3N3b3JkIjoiMTg1OTdTdHJpbmdAMCIsImlhdCI6MTcwODUyOTQwMX0.4I49ZvVDoopR-xlPj6QAXIzZFo6e_AafnahNMPP6pFc`,
       )
       .send(payload);
   },
@@ -61,14 +63,14 @@ const user = {
 
   infoWithoutToken: (payload) => {
     return supertest(url)
-      .get("/Account/v1/User/" + `${userID}`)
+      .get(`/Account/v1/User/${userID}`)
       .set("Accept", "application/json")
       .send(payload);
   },
 
   infoAfterDeleted: (payload) => {
     return supertest(url)
-      .get("/Account/v1/User/" + `${userID}`)
+      .get(`"/Account/v1/User/${userID}`)
       .set("Accept", "application/json")
       .set("Authorization", `Bearer ${token}`)
       .send(payload);
@@ -76,7 +78,7 @@ const user = {
 
   delete: (payload) => {
     return supertest(url)
-      .delete("/Account/v1/User/" + `${userID}`)
+      .delete(`/Account/v1/User/${userID}`)
       .set("Accept", "application/json")
       .set("Authorization", `Bearer ${token}`)
       .send(payload);
@@ -84,7 +86,7 @@ const user = {
 
   deleteWithoutToken: (payload) => {
     return supertest(url)
-      .delete("/Account/v1/User/" + `${userID}`)
+      .delete(`/Account/v1/User/${userID}`)
       .set("Accept", "application/json")
       .send(payload);
   },
@@ -92,6 +94,82 @@ const user = {
   deleteFailed: (payload) => {
     return supertest(url)
       .delete("/Account/v1/User/666")
+      .set("Accept", "application/json")
+      .set("Authorization", `Bearer ${token}`)
+      .send(payload);
+  },
+
+  createBook: (payload) => {
+    return supertest(url)
+      .post("/BookStore/v1/Books")
+      .set("Accept", "application/json")
+      .set("Authorization", `Bearer ${token}`)
+      .send(payload);
+  },
+
+  createBookWithoutToken: (payload) => {
+    return supertest(url)
+      .post("/BookStore/v1/Books")
+      .set("Accept", "application/json")
+      .send(payload);
+  },
+
+  updateBook: (payload) => {
+    return supertest(url)
+      .put(`/BookStore/v1/Books/${isbn}`)
+      .set("Accept", "application/json")
+      .set("Authorization", `Bearer ${token}`)
+      .send(payload);
+  },
+
+  updateBookWithoutToken: (payload) => {
+    return supertest(url)
+      .put(`/BookStore/v1/Books/${isbn}`)
+      .set("Accept", "application/json")
+      .send(payload);
+  },
+
+  getInfoBook: (payload) => {
+    return supertest(url)
+      .get("/BookStore/v1/Book?ISBN=9781449325862")
+      .set("Accept", "application/json")
+      .set("Authorization", `Bearer ${token}`)
+      .send(payload);
+  },
+
+  getInfoBookWithoutIsbn: (payload) => {
+    return supertest(url)
+      .get("/BookStore/v1/Book?ISBN=")
+      .set("Accept", "application/json")
+      .set("Authorization", `Bearer ${token}`)
+      .send(payload);
+  },
+
+  getInfoBookWithoutToken: (payload) => {
+    return supertest(url)
+      .get(`/BookStore/v1/Book?ISBN=${isbn}`)
+      .set("Accept", "application/json")
+      .send(payload);
+  },
+
+  deleteBook: (payload) => {
+    return supertest(url)
+      .delete("/BookStore/v1/Book")
+      .set("Accept", "application/json")
+      .set("Authorization", `Bearer ${token}`)
+      .send(payload);
+  },
+
+  deleteBookWithoutToken: (payload) => {
+    return supertest(url)
+      .delete("/BookStore/v1/Book")
+      .set("Accept", "application/json")
+      .send(payload);
+  },
+
+  deleteBookFailed: (payload) => {
+    return supertest(url)
+      .delete("/BookStore/v1/Book")
       .set("Accept", "application/json")
       .set("Authorization", `Bearer ${token}`)
       .send(payload);
